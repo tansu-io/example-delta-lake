@@ -122,12 +122,10 @@ just employee-duckdb-delta
 
 Giving the following output:
 
-```text
 |                          meta                          |      key      |                    value                    |
 |--------------------------------------------------------|---------------|---------------------------------------------|
 | {'partition': 0, 'timestamp': 2025-05-25 11:14:58.903} | {'id': 12321} | {'name': Bob, 'email': bob@example.com}     |
 | {'partition': 0, 'timestamp': 2025-05-25 11:14:58.903} | {'id': 32123} | {'name': Alice, 'email': alice@example.com} |
-```
 
 ## Grade
 
@@ -213,7 +211,6 @@ just grade-duckdb-delta
 
 Giving the following output:
 
-```text
 |     key     |                                                             value                                                             |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------|
 | 123-45-6789 | {'final': 49.0, 'first': Aloysius, 'grade': D-, 'last': Alfalfa, 'test1': 40.0, 'test2': 90.0, 'test3': 100.0, 'test4': 83.0} |
@@ -232,7 +229,6 @@ Giving the following output:
 | 234-56-2890 | {'final': 90.0, 'first': Benny, 'grade': B-, 'last': Franklin, 'test1': 50.0, 'test2': 1.0, 'test3': 90.0, 'test4': 80.0}     |
 | 345-67-3901 | {'final': 4.0, 'first': Boy, 'grade': B, 'last': George, 'test1': 40.0, 'test2': 1.0, 'test3': 11.0, 'test4': -1.0}           |
 | 632-79-9439 | {'final': 40.0, 'first': Harvey, 'grade': C, 'last': Heffalump, 'test1': 30.0, 'test2': 1.0, 'test3': 20.0, 'test4': 30.0}    |
-```
 
 ## Observation
 
@@ -288,7 +284,6 @@ just observation-duckdb-delta
 
 Giving the following output:
 
-```text
 |                 key                  |                value                 |                          meta                          |
 |--------------------------------------|--------------------------------------|--------------------------------------------------------|
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
@@ -301,7 +296,6 @@ Giving the following output:
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-```
 
 ## Person
 
@@ -370,7 +364,6 @@ just person-duckdb-delta
 
 Giving the following output:
 
-```text
 |                 key                  |                value                 |                          meta                          |
 |--------------------------------------|--------------------------------------|--------------------------------------------------------|
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
@@ -383,7 +376,6 @@ Giving the following output:
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-```
 
 ## Search
 
@@ -446,7 +438,6 @@ just search-duckdb-delta
 
 Giving the following output:
 
-```text
 |                 key                  |                value                 |                          meta                          |
 |--------------------------------------|--------------------------------------|--------------------------------------------------------|
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
@@ -459,7 +450,6 @@ Giving the following output:
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-```
 
 ## Taxi
 
@@ -519,7 +509,6 @@ just taxi-duckdb-delta
 
 Giving the following output:
 
-```text
 |                 key                  |                value                 |                          meta                          |
 |--------------------------------------|--------------------------------------|--------------------------------------------------------|
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
@@ -532,4 +521,3 @@ Giving the following output:
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
 | 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-```
