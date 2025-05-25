@@ -1,4 +1,4 @@
-Tansu is an Apache Kafka API compatible broker written in async 🚀 Rust 🦀 with PostgreSQL, S3 or memory storage engines.
+[Tansu](https://tansu.io) is an Apache Kafka API compatible broker written in async 🚀 Rust 🦀 with PostgreSQL, S3 or memory storage engines.
 
 Topics [validated](https://github.com/tansu-io/tansu/blob/main/docs/schema-registry.md) by [JSON Schema](https://json-schema.org), [Apache Avro](https://avro.apache.org)
 or [Protocol buffers](protocol-buffers) can be written as [Apache Iceberg](https://iceberg.apache.org) or [Delta Lake](https://delta.io) tables
@@ -10,7 +10,7 @@ Prerequisites:
 - **[duckdb](https://duckdb.org)**, a fast open source database system [that has native support for Delta Lake](https://duckdb.org/2024/06/10/delta.html)
 - **[just](https://github.com/casey/just)**, a handy way to save and run project-specific commands
 
-The [justfile](./justfile) contains recipes to run [MinIO](https://min.io), create the buckets, topics and produce data.
+The [justfile](./justfile) contains recipes to create topics, produce and query data.
 
 Once you have the prerequisites installed, clone this repository and start everything up with:
 
