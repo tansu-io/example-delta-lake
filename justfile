@@ -89,7 +89,7 @@ person-topic-create: (topic-create "person")
 person-produce: (cat-produce "person" "data/persons.json")
 
 # person duckdb delta lake
-person-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.observation');\"")
+person-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.person');\"")
 
 
 ## Search
@@ -101,7 +101,7 @@ search-topic-create: (topic-create "search")
 search-produce: (cat-produce "search" "data/searches.json")
 
 # search duckdb delta lake
-search-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.observation');\"")
+search-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.search');\"")
 
 
 ## Observation

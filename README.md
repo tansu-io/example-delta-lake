@@ -364,18 +364,24 @@ just person-duckdb-delta
 
 Giving the following output:
 
-|                 key                  |                value                 |                          meta                          |
-|--------------------------------------|--------------------------------------|--------------------------------------------------------|
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1027.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 22.8, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1023.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 22.5, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1018.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.1, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
+|     key     |                          value                           |
+|-------------|----------------------------------------------------------|
+| 123-45-6789 | {'age': 21, 'firstName': Aloysius, 'lastName': Alfalfa}  |
+| 123-12-1234 | {'age': 52, 'firstName': University, 'lastName': Alfred} |
+| 567-89-0123 | {'age': 35, 'firstName': Gamma, 'lastName': Gerty}       |
+| 087-65-4321 | {'age': 23, 'firstName': Electric, 'lastName': Android}  |
+| 456-78-9012 | {'age': 72, 'firstName': Fred, 'lastName': Bumpkin}      |
+| 234-56-7890 | {'age': 44, 'firstName': Betty, 'lastName': Rubble}      |
+| 345-67-8901 | {'age': 67, 'firstName': Cecil, 'lastName': Noshow}      |
+| 632-79-9939 | {'age': 38, 'firstName': Buff, 'lastName': Bif}          |
+| 223-45-6789 | {'age': 42, 'firstName': Andrew, 'lastName': Airpump}    |
+| 143-12-1234 | {'age': 63, 'firstName': Jim, 'lastName': Backus}        |
+| 565-89-0123 | {'age': 29, 'firstName': Art, 'lastName': Carnivore}     |
+| 087-75-4321 | {'age': 56, 'firstName': Jim, 'lastName': Dandy}         |
+| 456-71-9012 | {'age': 45, 'firstName': Ima, 'lastName': Elephant}      |
+| 234-56-2890 | {'age': 54, 'firstName': Benny, 'lastName': Franklin}    |
+| 345-67-3901 | {'age': 91, 'firstName': Boy, 'lastName': George}        |
+| 632-79-9439 | {'age': 17, 'firstName': Harvey, 'lastName': Heffalump}  |
 
 ## Search
 
@@ -438,18 +444,9 @@ just search-duckdb-delta
 
 Giving the following output:
 
-|                 key                  |                value                 |                          meta                          |
-|--------------------------------------|--------------------------------------|--------------------------------------------------------|
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1027.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 22.8, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1023.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 22.5, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1018.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.1, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
+|                          meta                          |                                   value                                   |
+|--------------------------------------------------------|---------------------------------------------------------------------------|
+| {'partition': 0, 'timestamp': 2025-05-25 15:06:18.507} | {'query': abc/def, 'page_number': 6, 'results_per_page': 13, 'corpus': 2} |
 
 ## Taxi
 
