@@ -1,0 +1,44 @@
+---
+services:
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio:/data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+    healthcheck:
+      test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
+      interval: 5s
+      retries: 1
+      start_period: 5s
+      timeout: 5s
+  tansu:
+    image: ${TANSU_IMAGE}
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      ADVERTISED_LISTENER_URL: ${ADVERTISED_LISTENER_URL}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_ALLOW_HTTP: ${AWS_ALLOW_HTTP}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      AWS_ENDPOINT: ${AWS_ENDPOINT}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      DATA_LAKE: ${DATA_LAKE}
+      RUST_BACKTRACE: ${RUST_BACKTRACE}
+      RUST_LOG: ${RUST_LOG}
+      SCHEMA_REGISTRY: ${SCHEMA_REGISTRY}
+      STORAGE_ENGINE: ${STORAGE_ENGINE}
+    command: ["broker", "delta"]
+    volumes:
+      - ./schema/:/schema/
+      - ./data/:/data/
+    ports:
+      - 9092:9092
+      - 9100:9100
+volumes:
+  minio:
+    driver: local
