@@ -125,7 +125,7 @@ taxi-topic-create: (topic-create "taxi")
 taxi-produce: (cat-produce "taxi" "data/trips.json")
 
 # taxi duckdb delta lake
-taxi-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.observation');\"")
+taxi-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.taxi');\"")
 
 
 ## Grade

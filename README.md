@@ -509,15 +509,10 @@ just taxi-duckdb-delta
 
 Giving the following output:
 
-|                 key                  |                value                 |                          meta                          |
-|--------------------------------------|--------------------------------------|--------------------------------------------------------|
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.2, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1027.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 22.8, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1023.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 22.5, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1018.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.1, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1020.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 23.4, 'unit': CELSIUS}    | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
-| 1e44d9c2-5e7a-443b-bf10-2b1e5fd72f15 | {'amount': 1025.0, 'unit': MILLIBAR} | {'partition': 0, 'timestamp': 2025-05-25 14:08:24.539} |
+|                          meta                          |                                                value                                                 |
+|--------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 1, 'trip_id': 1000371, 'trip_distance': 1.8, 'fare_amount': 15.32, 'store_and_fwd': 0} |
+| {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 2, 'trip_id': 1000372, 'trip_distance': 2.5, 'fare_amount': 22.15, 'store_and_fwd': 0} |
+| {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 2, 'trip_id': 1000373, 'trip_distance': 0.9, 'fare_amount': 9.01, 'store_and_fwd': 0}  |
+| {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 1, 'trip_id': 1000374, 'trip_distance': 8.4, 'fare_amount': 42.13, 'store_and_fwd': 1} |
+
