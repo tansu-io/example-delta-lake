@@ -1,3 +1,7 @@
+Tansu is an Apache Kafka API compatible broker written in async 🚀 Rust 🦀 with PostgreSQL, S3 or memory storage engines.
+
+Topics [validated](https://github.com/tansu-io/tansu/blob/main/docs/schema-registry.md) by [JSON Schema](https://json-schema.org), [Apache Avro](https://avro.apache.org)
+or [Protocol buffers](protocol-buffers) can be written as [Apache Iceberg](https://iceberg.apache.org) or [Delta Lake](https://delta.io) tables
 
 This repository showcases examples of structured data published to schema-backed topics, instantly accessible as [Delta Lake](https://delta.io) tables.
 
@@ -43,6 +47,14 @@ docker compose up --detach --wait tansu
 ✔ tansu Pulled
 ✔ Container example-delta-duckdb-tansu-1  Healthy
 ```
+
+The above does the following:
+- starts the [MinIO](https://min.io) S3 compatible service
+- creates a `s3://lake` bucket in [MinIO](https://min.io), used to store the [Delta Lake](https://delta.io) tables
+- creates a `s3://tansu` bucket in [MinIO](https://min.io), used to store Kafka related data used by [tansu](https://tansu.io)
+- runs the [tansu](https://tansu.io) broker configured to use [MinIO](https://min.io) as the storage engine with [Delta Lake](https://delta.io)
+
+
 
 Done! You can now run the examples.
 
@@ -90,7 +102,7 @@ Publish the sample data onto the employee topic:
 just employee-produce
 ```
 
-Tansu creates the following in the Delta Lake:
+We can view the files created by Tansu in `s3://lake/tansu.employee` with:
 
 ```bash
 just minio-mc ls -r local/lake/tansu.employee
@@ -181,7 +193,7 @@ Publish the sample data onto the grade topic:
 just grade-produce
 ```
 
-Tansu creates the following in the Delta Lake:
+We can view the files created by Tansu in `s3://lake/tansu.grade` with:
 
 ```bash
 just minio-mc ls -r local/lake/tansu.grade
