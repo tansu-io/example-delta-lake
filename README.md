@@ -117,7 +117,7 @@ just minio-mc ls -r local/lake/tansu.employee
 
 Note that the `tansu.employee` table, is partitioned on the `meta.year`, `meta.month`, `meta.day`:
 
-``sh
+```sh
 docker compose exec minio mc ls -r local/lake/tansu.employee
 [2025-05-30 06:56:41 UTC] 2.5KiB STANDARD _delta_log/00000000000000000000.json
 [2025-05-30 06:56:41 UTC]   998B STANDARD _delta_log/00000000000000000001.json
@@ -218,6 +218,8 @@ We can view the files created by Tansu in `s3://lake/tansu.grade` with:
 ```sh
 just minio-mc ls -r local/lake/tansu.grade
 ```
+
+Note that the `tansu.grade` table, is partitioned on the `meta.year`:
 
 ```sh
 [2025-05-31 06:57:19 UTC] 3.4KiB STANDARD _delta_log/00000000000000000000.json
