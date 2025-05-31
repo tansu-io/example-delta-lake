@@ -198,12 +198,12 @@ just grade-topic-create
 The above command will create an `tansu.grade` [Delta Lake](https://delta.io) table, that is [normalized](https://docs.rs/arrow/latest/arrow/array/struct.RecordBatch.html#method.normalize),
 partitioned on `meta.year` from the Kafka message, the [Z Order](https://delta.io/blog/2023-06-03-delta-lake-z-order/) of the data is `value.grade` :
 
-| config                         | value                                                                     |
-|--------------------------------|---------------------------------------------------------------------------|
-| tansu.lake.partition           | meta_year                                                                 |
-| tansu.lake.normalize           | true                                                                      |
-| tansu.lake.normalize.separator | `_`                                                                       |
-| tansu.lake.z_order             | `value_grade`                                                             |
+| config                         | value                                                                   |
+|--------------------------------|-------------------------------------------------------------------------|
+| tansu.lake.partition           | meta_year                                                               |
+| tansu.lake.normalize           | true                                                                    |
+| tansu.lake.normalize.separator | _                                                                       |
+| tansu.lake.z_order             | value_grade                                                             |
 
 Tansu will automatically maintain this table compacting small files and applying Z Ordering every 10 minutes or so.
 
