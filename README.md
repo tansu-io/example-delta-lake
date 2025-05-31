@@ -14,14 +14,14 @@ The [justfile](./justfile) contains recipes to create topics, produce and query 
 
 Once you have the prerequisites installed, clone this repository and start everything up with:
 
-```shell
+```sh
 git clone git@github.com:tansu-io/example-delta-duckdb.git
 cd example-pyiceberg
 ```
 
 Start everything up with:
 
-```shell
+```sh
 just up
 ```
 
@@ -53,8 +53,6 @@ The above does the following:
 - creates a `s3://lake` bucket in [MinIO](https://min.io), used to store the [Delta Lake](https://delta.io) tables
 - creates a `s3://tansu` bucket in [MinIO](https://min.io), used to store Kafka related data used by [tansu](https://tansu.io)
 - runs the [tansu](https://tansu.io) broker configured to use [MinIO](https://min.io) as the storage engine with [Delta Lake](https://delta.io)
-
-
 
 Done! You can now run the examples.
 
@@ -92,40 +90,52 @@ Sample employee data is in [employees.json](data/employees.json):
 
 Create the employee topic:
 
-```bash
+```sh
 just employee-topic-create
 ```
 
+The above command will create an `tansu.employee` [Delta Lake](https://delta.io) table, that is [normalized](https://docs.rs/arrow/latest/arrow/array/struct.RecordBatch.html#method.normalize)
+and partitioned on the `meta.year`, `meta.month`, `meta.day` from the Kafka message:
+
+| config               | value                         |
+|----------------------|-------------------------------|
+| tansu.lake.partition | meta.year,meta.month,meta.day |
+| tansu.lake.normalize | true                          |
+
+
 Publish the sample data onto the employee topic:
 
-```bash
+```sh
 just employee-produce
 ```
 
-We can view the files created by Tansu in `s3://lake/tansu.employee` with:
+We can view the [Delta Lake](https://delta.io) table created in `s3://lake/tansu.employee` with:
 
-```bash
+```sh
 just minio-mc ls -r local/lake/tansu.employee
 ```
 
-```bash
-[2025-05-25 11:30:03 UTC] 3.0KiB STANDARD _delta_log/00000000000000000000.json
-[2025-05-25 11:30:03 UTC]   868B STANDARD _delta_log/00000000000000000001.json
-[2025-05-25 11:30:03 UTC] 2.5KiB STANDARD part-00000-73eafe99-1203-4d4e-9d68-af24b3c02533-c000.parquet
+Note that the `tansu.employee` table, is partitioned on the `meta.year`, `meta.month`, `meta.day`:
+
+``sh
+docker compose exec minio mc ls -r local/lake/tansu.employee
+[2025-05-30 06:56:41 UTC] 2.5KiB STANDARD _delta_log/00000000000000000000.json
+[2025-05-30 06:56:41 UTC]   998B STANDARD _delta_log/00000000000000000001.json
+[2025-05-30 06:56:41 UTC] 1.8KiB STANDARD meta.year=2025/meta.month=5/meta.day=30/part-00000-47182dcc-6071-4836-8233-1ae50678194e-c000.parquet
 ```
 
-To view the data in DuckDB:
+To view the [Delta Lake](https://delta.io) table in DuckDB:
 
-```bash
+```sh
 just employee-duckdb-delta
 ```
 
 Giving the following output:
 
-|                          meta                          |      key      |                    value                    |
-|--------------------------------------------------------|---------------|---------------------------------------------|
-| {'partition': 0, 'timestamp': 2025-05-25 11:14:58.903} | {'id': 12321} | {'name': Bob, 'email': bob@example.com}     |
-| {'partition': 0, 'timestamp': 2025-05-25 11:14:58.903} | {'id': 32123} | {'name': Alice, 'email': alice@example.com} |
+| meta.partition |     meta.timestamp      | meta.year | meta.month | meta.day | key.id | value.name |    value.email    |
+|---------------:|-------------------------|----------:|-----------:|---------:|-------:|------------|-------------------|
+| 0              | 2025-05-30 06:56:41.136 | 2025      | 5          | 30       | 12321  | Bob        | bob@example.com   |
+| 0              | 2025-05-30 06:56:41.136 | 2025      | 5          | 30       | 32123  | Alice      | alice@example.com |
 
 ## Grade
 
@@ -181,54 +191,87 @@ Sample grade data is in: [grades.json](data/grades.json):
 
 Create the grade topic:
 
-```bash
+```sh
 just grade-topic-create
 ```
 
+The above command will create an `tansu.grade` [Delta Lake](https://delta.io) table, that is [normalized](https://docs.rs/arrow/latest/arrow/array/struct.RecordBatch.html#method.normalize),
+partitioned on `meta.year` from the Kafka message, the [Z Order](https://delta.io/blog/2023-06-03-delta-lake-z-order/) of the data is `value.grade` :
+
+| config                         | value                                                                     |
+|--------------------------------|---------------------------------------------------------------------------|
+| tansu.lake.partition           | meta_year                                                                 |
+| tansu.lake.normalize           | true                                                                      |
+| tansu.lake.normalize.separator | `_`                                                                       |
+| tansu.lake.z_order             | `value_grade`                                                             |
+
+Tansu will automatically maintain this table compacting small files and applying Z Ordering every 10 minutes or so.
+
 Publish the sample data onto the grade topic:
 
-```bash
+```sh
 just grade-produce
 ```
 
 We can view the files created by Tansu in `s3://lake/tansu.grade` with:
 
-```bash
+```sh
 just minio-mc ls -r local/lake/tansu.grade
 ```
 
-```bash
-[2025-05-25 14:04:41 UTC] 3.2KiB STANDARD _delta_log/00000000000000000000.json
-[2025-05-25 14:04:41 UTC]   924B STANDARD _delta_log/00000000000000000001.json
-[2025-05-25 14:04:41 UTC] 4.7KiB STANDARD part-00000-0d6c55ef-7f2b-47e7-b3e2-98089d7fff45-c000.parquet
+```sh
+[2025-05-31 06:57:19 UTC] 3.4KiB STANDARD _delta_log/00000000000000000000.json
+[2025-05-31 06:57:19 UTC] 1.4KiB STANDARD _delta_log/00000000000000000001.json
+[2025-05-31 06:57:19 UTC] 5.4KiB STANDARD meta.year=2025/part-00000-bd6bce1a-0288-4ab2-9a40-01dc0bff2199-c000.parquet
 ```
 
 View the data in DuckDB:
 
-```bash
+```sh
 just grade-duckdb-delta
 ```
 
-Giving the following output:
+Giving the following output, note that the `grade` is unordered:
 
-|     key     |                                                             value                                                             |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------|
-| 123-45-6789 | {'final': 49.0, 'first': Aloysius, 'grade': D-, 'last': Alfalfa, 'test1': 40.0, 'test2': 90.0, 'test3': 100.0, 'test4': 83.0} |
-| 123-12-1234 | {'final': 48.0, 'first': University, 'grade': D+, 'last': Alfred, 'test1': 41.0, 'test2': 97.0, 'test3': 96.0, 'test4': 97.0} |
-| 567-89-0123 | {'final': 44.0, 'first': Gramma, 'grade': C, 'last': Gerty, 'test1': 41.0, 'test2': 80.0, 'test3': 60.0, 'test4': 40.0}       |
-| 087-65-4321 | {'final': 47.0, 'first': Electric, 'grade': B-, 'last': Android, 'test1': 42.0, 'test2': 23.0, 'test3': 36.0, 'test4': 45.0}  |
-| 456-78-9012 | {'final': 45.0, 'first': Fred, 'grade': A-, 'last': Bumpkin, 'test1': 43.0, 'test2': 78.0, 'test3': 88.0, 'test4': 77.0}      |
-| 234-56-7890 | {'final': 46.0, 'first': Betty, 'grade': C-, 'last': Rubble, 'test1': 44.0, 'test2': 90.0, 'test3': 80.0, 'test4': 90.0}      |
-| 345-67-8901 | {'final': 43.0, 'first': Cecil, 'grade': F, 'last': Noshow, 'test1': 45.0, 'test2': 11.0, 'test3': -1.0, 'test4': 4.0}        |
-| 632-79-9939 | {'final': 50.0, 'first': Bif, 'grade': B+, 'last': Buff, 'test1': 46.0, 'test2': 20.0, 'test3': 30.0, 'test4': 40.0}          |
-| 223-45-6789 | {'final': 83.0, 'first': Andrew, 'grade': A, 'last': Airpump, 'test1': 49.0, 'test2': 1.0, 'test3': 90.0, 'test4': 100.0}     |
-| 143-12-1234 | {'final': 97.0, 'first': Jim, 'grade': A+, 'last': Backus, 'test1': 48.0, 'test2': 1.0, 'test3': 97.0, 'test4': 96.0}         |
-| 565-89-0123 | {'final': 40.0, 'first': Art, 'grade': D+, 'last': Carnivore, 'test1': 44.0, 'test2': 1.0, 'test3': 80.0, 'test4': 60.0}      |
-| 087-75-4321 | {'final': 45.0, 'first': Jim, 'grade': C+, 'last': Dandy, 'test1': 47.0, 'test2': 1.0, 'test3': 23.0, 'test4': 36.0}          |
-| 456-71-9012 | {'final': 77.0, 'first': Ima, 'grade': B-, 'last': Elephant, 'test1': 45.0, 'test2': 1.0, 'test3': 78.0, 'test4': 88.0}       |
-| 234-56-2890 | {'final': 90.0, 'first': Benny, 'grade': B-, 'last': Franklin, 'test1': 50.0, 'test2': 1.0, 'test3': 90.0, 'test4': 80.0}     |
-| 345-67-3901 | {'final': 4.0, 'first': Boy, 'grade': B, 'last': George, 'test1': 40.0, 'test2': 1.0, 'test3': 11.0, 'test4': -1.0}           |
-| 632-79-9439 | {'final': 40.0, 'first': Harvey, 'grade': C, 'last': Heffalump, 'test1': 30.0, 'test2': 1.0, 'test3': 20.0, 'test4': 30.0}    |
+| meta_day | meta_month | meta_partition |        meta_timestamp         | meta_year |     key     | value_final | value_first | value_grade | value_last | value_test1 | value_test2 | value_test3 | value_test4 |
+|---------:|-----------:|---------------:|-------------------------------|----------:|-------------|------------:|-------------|-------------|------------|------------:|------------:|------------:|------------:|
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 345-67-8901 | 43.0        | Cecil       | F           | Noshow     | 45.0        | 11.0        | -1.0        | 4.0         |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 123-12-1234 | 48.0        | University  | D+          | Alfred     | 41.0        | 97.0        | 96.0        | 97.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 123-45-6789 | 49.0        | Aloysius    | D-          | Alfalfa    | 40.0        | 90.0        | 100.0       | 83.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 234-56-7890 | 46.0        | Betty       | C-          | Rubble     | 44.0        | 90.0        | 80.0        | 90.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 567-89-0123 | 44.0        | Gramma      | C           | Gerty      | 41.0        | 80.0        | 60.0        | 40.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 632-79-9939 | 50.0        | Bif         | B+          | Buff       | 46.0        | 20.0        | 30.0        | 40.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 456-78-9012 | 45.0        | Fred        | A-          | Bumpkin    | 43.0        | 78.0        | 88.0        | 77.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 087-65-4321 | 47.0        | Electric    | B-          | Android    | 42.0        | 23.0        | 36.0        | 45.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 345-67-3901 | 4.0         | Boy         | B           | George     | 40.0        | 1.0         | 11.0        | -1.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 143-12-1234 | 97.0        | Jim         | A+          | Backus     | 48.0        | 1.0         | 97.0        | 96.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 565-89-0123 | 40.0        | Art         | D+          | Carnivore  | 44.0        | 1.0         | 80.0        | 60.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 632-79-9439 | 40.0        | Harvey      | C           | Heffalump  | 30.0        | 1.0         | 20.0        | 30.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 234-56-2890 | 90.0        | Benny       | B-          | Franklin   | 50.0        | 1.0         | 90.0        | 80.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 223-45-6789 | 83.0        | Andrew      | A           | Airpump    | 49.0        | 1.0         | 90.0        | 100.0       |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 087-75-4321 | 45.0        | Jim         | C+          | Dandy      | 47.0        | 1.0         | 23.0        | 36.0        |
+| 31       | 5          | 0              | 2025-05-31T08:05:37.956+00:00 | 2025      | 456-71-9012 | 77.0        | Ima         | B-          | Elephant   | 45.0        | 1.0         | 78.0        | 88.0        |
+
+After maintenance has run the table is ordered by `grade`:
+
+| meta_day | meta_month | meta_partition |        meta_timestamp         | meta_year |     key     | value_final | value_first | value_grade | value_last | value_test1 | value_test2 | value_test3 | value_test4 |
+|---------:|-----------:|---------------:|-------------------------------|----------:|-------------|------------:|-------------|-------------|------------|------------:|------------:|------------:|------------:|
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 223-45-6789 | 83.0        | Andrew      | A           | Airpump    | 49.0        | 1.0         | 90.0        | 100.0       |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 143-12-1234 | 97.0        | Jim         | A+          | Backus     | 48.0        | 1.0         | 97.0        | 96.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 456-78-9012 | 45.0        | Fred        | A-          | Bumpkin    | 43.0        | 78.0        | 88.0        | 77.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 345-67-3901 | 4.0         | Boy         | B           | George     | 40.0        | 1.0         | 11.0        | -1.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 632-79-9939 | 50.0        | Bif         | B+          | Buff       | 46.0        | 20.0        | 30.0        | 40.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 087-65-4321 | 47.0        | Electric    | B-          | Android    | 42.0        | 23.0        | 36.0        | 45.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 456-71-9012 | 77.0        | Ima         | B-          | Elephant   | 45.0        | 1.0         | 78.0        | 88.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 234-56-2890 | 90.0        | Benny       | B-          | Franklin   | 50.0        | 1.0         | 90.0        | 80.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 567-89-0123 | 44.0        | Gramma      | C           | Gerty      | 41.0        | 80.0        | 60.0        | 40.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 632-79-9439 | 40.0        | Harvey      | C           | Heffalump  | 30.0        | 1.0         | 20.0        | 30.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 087-75-4321 | 45.0        | Jim         | C+          | Dandy      | 47.0        | 1.0         | 23.0        | 36.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 234-56-7890 | 46.0        | Betty       | C-          | Rubble     | 44.0        | 90.0        | 80.0        | 90.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 123-12-1234 | 48.0        | University  | D+          | Alfred     | 41.0        | 97.0        | 96.0        | 97.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 565-89-0123 | 40.0        | Art         | D+          | Carnivore  | 44.0        | 1.0         | 80.0        | 60.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 123-45-6789 | 49.0        | Aloysius    | D-          | Alfalfa    | 40.0        | 90.0        | 100.0       | 83.0        |
+| 31       | 5          | 0              | 2025-05-31T08:31:39.065+00:00 | 2025      | 345-67-8901 | 43.0        | Cecil       | F           | Noshow     | 45.0        | 11.0        | -1.0        | 4.0         |
 
 ## Observation
 
@@ -266,19 +309,19 @@ Sample observation data, is in: [observations.json](data/observations.json):
 
 Create the observation topic:
 
-```bash
+```sh
 just observation-topic-create
 ```
 
 Publish the sample data onto the observation topic:
 
-```bash
+```sh
 just observation-produce
 ```
 
 View the data in DuckDB:
 
-```bash
+```sh
 just observation-duckdb-delta
 ```
 
@@ -346,19 +389,19 @@ Sample person data, is in [persons.json](data/persons.json):
 
 Create the person topic:
 
-```bash
+```sh
 just person-topic-create
 ```
 
 Publish the sample data onto the person topic:
 
-```bash
+```sh
 just person-produce
 ```
 
 View the data in DuckDB:
 
-```bash
+```sh
 just person-duckdb-delta
 ```
 
@@ -426,19 +469,19 @@ Sample search data, is in [searches.json](data/searches.json):
 
 Create the search topic:
 
-```bash
+```sh
 just search-topic-create
 ```
 
 Publish the sample data onto the search topic:
 
-```bash
+```sh
 just search-produce
 ```
 
 View the data in DuckDB:
 
-```bash
+```sh
 just search-duckdb-delta
 ```
 
@@ -488,19 +531,19 @@ Sample trip data, is in [trips.json](data/trips.json):
 
 Create the taxi topic:
 
-```bash
+```sh
 just taxi-topic-create
 ```
 
 Publish the sample data onto the taxi topic:
 
-```bash
+```sh
 just taxi-produce
 ```
 
 View the data in DuckDB:
 
-```bash
+```sh
 just taxi-duckdb-delta
 ```
 
@@ -512,4 +555,3 @@ Giving the following output:
 | {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 2, 'trip_id': 1000372, 'trip_distance': 2.5, 'fare_amount': 22.15, 'store_and_fwd': 0} |
 | {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 2, 'trip_id': 1000373, 'trip_distance': 0.9, 'fare_amount': 9.01, 'store_and_fwd': 0}  |
 | {'partition': 0, 'timestamp': 2025-05-25 14:58:11.719} | {'vendor_id': 1, 'trip_id': 1000374, 'trip_distance': 8.4, 'fare_amount': 42.13, 'store_and_fwd': 1} |
-

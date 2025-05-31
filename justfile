@@ -50,7 +50,7 @@ tansu-up: (docker-compose-up "tansu")
 tansu-down: (docker-compose-down "tansu")
 
 [private]
-topic-create topic: (docker-compose-exec "tansu" "/tansu" "topic" "create" topic)
+topic-create topic *args: (docker-compose-exec "tansu" "/tansu" "topic" "create" topic args)
 
 [private]
 topic-delete topic: (docker-compose-exec "tansu" "/tansu" "topic" "delete" topic)
@@ -63,12 +63,12 @@ cat-consume topic: (docker-compose-exec "tansu" "/tansu" "cat" "consume" topic "
 
 [private]
 duckdb *sql:
-    duckdb -init duckdb-init.sql :memory: {{sql}}
+    duckdb -markdown -init duckdb-init.sql :memory: {{sql}}
 
 ## Employee
 
 # create employee topic with schema/employee.proto
-employee-topic-create: (topic-create "employee")
+employee-topic-create: (topic-create "employee" "--config" "tansu.lake.partition=meta.year,meta.month,meta.day" "--config" "tansu.lake.normalize=true")
 
 # produce data/persons.json with schema/person.json
 employee-produce: (cat-produce "employee" "data/employees.json")
@@ -83,7 +83,7 @@ employee-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.empl
 ## Person
 
 # create person topic with schema/person.json
-person-topic-create: (topic-create "person")
+person-topic-create: (topic-create "person" "--partitions" "1" "--config" "tansu.lake.partition=meta.year,meta.month,meta.day" "--config" "tansu.lake.normalize=true" "--config" "tansu.lake.sink=true")
 
 # produce data/persons.json with schema/person.json
 person-produce: (cat-produce "person" "data/persons.json")
@@ -131,7 +131,7 @@ taxi-duckdb-delta: (duckdb "\"select * from delta_scan('s3://lake/tansu.taxi');\
 ## Grade
 
 # create grade topic with schema etc/schema/grades.proto
-grade-topic-create: (topic-create "grade")
+grade-topic-create: (topic-create "grade" "--config" "tansu.lake.partition=meta_year" "--config" "tansu.lake.normalize.separator=_" "--config" "tansu.lake.z_order=value_grade" "--config" "tansu.lake.normalize=true")
 
 # produce data/grades.json with schema schema/grades.proto
 grade-produce: (cat-produce "grade" "data/grades.json")
